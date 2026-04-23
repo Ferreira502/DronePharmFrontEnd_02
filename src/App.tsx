@@ -1,122 +1,110 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Suspense, lazy, type ReactElement } from "react";
+import {
+  BrowserRouter,
+  Link,
+  Outlet,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { MainLayout } from "@/components/layout/MainLayout";
+import { Button } from "@/components/ui/button";
+import { OrderMonitoringDashboard } from "@/features/monitoring/OrderMonitoringDashboard";
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+const DEFAULT_PEDIDO_ID = 1;
+const FALLBACK_TITLE = "Carregando modulo";
+const FALLBACK_DESCRIPTION = "Preparando a tela solicitada.";
 
-      <div className="ticks"></div>
+const PedidoListPage = lazy(
+  () => import("@/features/management/pedidos/PedidoListPage"),
+);
+const PedidoCreatePage = lazy(
+  () => import("@/features/management/pedidos/PedidoCreatePage"),
+);
+const DroneListPage = lazy(
+  () => import("@/features/management/drones/DroneListPage"),
+);
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+function getPedidoIdParamValue(pedidoIdParam: string | undefined): number {
+  if (pedidoIdParam === undefined) {
+    return DEFAULT_PEDIDO_ID;
+  }
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+  const parsedPedidoId = Number(pedidoIdParam);
+
+  if (!Number.isInteger(parsedPedidoId) || parsedPedidoId <= 0) {
+    return DEFAULT_PEDIDO_ID;
+  }
+
+  return parsedPedidoId;
 }
 
-export default App
+function RouteFallback(): ReactElement {
+  return (
+    <div className="flex min-h-[calc(100dvh-56px)] items-center justify-center p-6">
+      <div className="flex max-w-md flex-col gap-3 rounded-xl border border-border bg-card p-6 text-center">
+        <h2 className="text-lg font-semibold text-foreground">
+          {FALLBACK_TITLE}
+        </h2>
+        <p className="text-sm text-muted-foreground">{FALLBACK_DESCRIPTION}</p>
+      </div>
+    </div>
+  );
+}
+
+function LazyRouteOutlet(): ReactElement {
+  return (
+    <Suspense fallback={<RouteFallback />}>
+      <Outlet />
+    </Suspense>
+  );
+}
+
+function MonitoringRoute(): ReactElement {
+  const { pedidoId } = useParams<{ pedidoId?: string }>();
+  const resolvedPedidoId = getPedidoIdParamValue(pedidoId);
+
+  return <OrderMonitoringDashboard pedidoId={resolvedPedidoId} />;
+}
+
+function NotFoundRoute(): ReactElement {
+  return (
+    <div className="flex min-h-[calc(100dvh-56px)] items-center justify-center p-6">
+      <div className="flex max-w-md flex-col gap-4 rounded-xl border border-border bg-card p-6 text-center">
+        <h2 className="text-lg font-semibold text-foreground">
+          Rota nao encontrada
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          A URL informada nao corresponde a nenhuma tela do DronePharm.
+        </p>
+        <Button asChild>
+          <Link to="/monitoramento">Ir para monitoramento</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function App(): ReactElement {
+  return (
+    <div className="dark min-h-dvh bg-background text-foreground">
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route index element={<MonitoringRoute />} />
+            <Route path="monitoramento/:pedidoId?" element={<MonitoringRoute />} />
+
+            <Route element={<LazyRouteOutlet />}>
+              <Route path="pedidos" element={<PedidoListPage />} />
+              <Route path="pedidos/novo" element={<PedidoCreatePage />} />
+              <Route path="drones" element={<DroneListPage />} />
+            </Route>
+
+            <Route path="*" element={<NotFoundRoute />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
+}
