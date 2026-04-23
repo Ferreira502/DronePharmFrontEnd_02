@@ -1,11 +1,3 @@
-# Agent Skills
-
-A collection of skills for AI coding agents. Skills are packaged instructions and scripts that extend agent capabilities.
-
-Skills follow the [Agent Skills](https://agentskills.io/) format.
-
-## Available Skills
-
 ### react-best-practices
 
 React and Next.js performance optimization guidelines from Vercel Engineering. Contains 40+ rules across 8 categories, prioritized by impact.
@@ -128,42 +120,3 @@ Deploy applications and websites to Vercel instantly. Designed for use with clau
 3. Uploads to deployment service
 4. Returns preview URL and claim URL
 
-**Output:**
-```
-Deployment successful!
-
-Preview URL: https://skill-deploy-abc123.vercel.app
-Claim URL:   https://vercel.com/claim-deployment?code=...
-```
-
-## Installation
-
-```bash
-npx skills add vercel-labs/agent-skills
-```
-
-## Usage
-
-Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
-
-**Examples:**
-```
-Deploy my app
-```
-```
-Review this React component for performance issues
-```
-```
-Help me optimize this Next.js page
-```
-
-## Skill Structure
-
-Each skill contains:
-- `SKILL.md` - Instructions for the agent
-- `scripts/` - Helper scripts for automation (optional)
-- `references/` - Supporting documentation (optional)
-
-## License
-
-MIT
