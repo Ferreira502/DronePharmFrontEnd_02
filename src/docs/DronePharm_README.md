@@ -966,6 +966,10 @@ WS     /ws/telemetria/{drone_id}            → broadcast WSTelemetriaPayload
 3. docs/openapi.json (Contrato da API e Tipagem)
 
 Todo código gerado deve consultar e seguir rigorosamente as regras de performance em docs/react-best-practices.md e o sistema visual em src/styles/design-system.md
+
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ao receber este prompt, NÃO gere nenhum código ainda. Apenas responda confirmando que você leu e compreendeu a stack tecnológica, o sistema de tokens em src/styles/tokens.css, o contrato da API em docs/openapi.json e as diretrizes de performance em docs/react-best-practices.md. Aguarde o meu comando para iniciar o PROMPT 0.5 (Utils)."
 ```
 
 ---
