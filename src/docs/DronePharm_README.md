@@ -622,7 +622,10 @@ npm run coverage   # Vitest com relatório de cobertura
 | leaflet | ^1.9.4 | |
 | lucide-react | ^0.400.0 | |
 | vitest | ^3.0.0 | |
-| @testing-library/react | ^16.0.0 | |
+| react-hook-form | ^7.73.1 | |
+| "zod":  | ^4.3.6"| |
+| react-router-dom| ^7.14.2 | |
+| @hookform/resolvers": | ^5.2.2 | |
 
 ---
 
