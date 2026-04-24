@@ -10,9 +10,8 @@ import {
 
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
+import { MonitoringSelector } from "@/features/monitoring/components/MonitoringSelector";
 import { OrderMonitoringDashboard } from "@/features/monitoring/OrderMonitoringDashboard";
-
-const DEFAULT_PEDIDO_ID = 1;
 const FALLBACK_TITLE = "Carregando modulo";
 const FALLBACK_DESCRIPTION = "Preparando a tela solicitada.";
 
@@ -28,13 +27,13 @@ const DroneListPage = lazy(
 
 function getPedidoIdParamValue(pedidoIdParam: string | undefined): number {
   if (pedidoIdParam === undefined) {
-    return DEFAULT_PEDIDO_ID;
+    return 0;
   }
 
   const parsedPedidoId = Number(pedidoIdParam);
 
   if (!Number.isInteger(parsedPedidoId) || parsedPedidoId <= 0) {
-    return DEFAULT_PEDIDO_ID;
+    return 0;
   }
 
   return parsedPedidoId;
@@ -64,6 +63,10 @@ function LazyRouteOutlet(): ReactElement {
 function MonitoringRoute(): ReactElement {
   const { pedidoId } = useParams<{ pedidoId?: string }>();
   const resolvedPedidoId = getPedidoIdParamValue(pedidoId);
+
+  if (resolvedPedidoId === 0) {
+    return <MonitoringSelector />;
+  }
 
   return <OrderMonitoringDashboard pedidoId={resolvedPedidoId} />;
 }

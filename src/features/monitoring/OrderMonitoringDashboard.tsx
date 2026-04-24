@@ -63,6 +63,16 @@ function getErrorMessage(error: unknown): string {
   return "Nao foi possivel carregar o pedido.";
 }
 
+function getMonitoringErrorMessage(error: unknown): string {
+  const validationMessage = getValidationErrorMessage(error);
+
+  if (validationMessage !== null) {
+    return "O pedido ainda nao iniciou a telemetria. Aguarde o drone entrar em operacao e tente novamente.";
+  }
+
+  return getErrorMessage(error);
+}
+
 function getStatusBadgeClassName(status: PedidoAtivoResponse["status"]): string {
   switch (status) {
     case "pendente":
@@ -162,6 +172,14 @@ export function OrderMonitoringDashboard({
     resetTelemetry();
   }, [pedidoId, resetTelemetry]);
 
+  useEffect(() => {
+    if (!pedidoAtivoQuery.isError) {
+      return;
+    }
+
+    toast.error(getMonitoringErrorMessage(pedidoAtivoQuery.error));
+  }, [pedidoAtivoQuery.error, pedidoAtivoQuery.isError]);
+
   async function invalidatePedidoAtivoQuery(): Promise<void> {
     await queryClient.invalidateQueries({
       queryKey: ["pedido-ativo", pedidoId],
@@ -203,7 +221,7 @@ export function OrderMonitoringDashboard({
 
   if (pedidoAtivoQuery.isError || pedidoAtivoQuery.data === undefined) {
     return renderErrorState(
-      getErrorMessage(pedidoAtivoQuery.error),
+      getMonitoringErrorMessage(pedidoAtivoQuery.error),
       pedidoAtivoQuery.refetch,
     );
   }

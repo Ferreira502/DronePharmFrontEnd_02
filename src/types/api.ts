@@ -31,7 +31,7 @@ export interface PedidoResponse {
   descricao: string | null;
   farmacia_id: number;
   rota_id: number | null;
-  status: string;
+  status: PedidoStatus;
   janela_fim: string | null;
   criado_em: string;
   entregue_em: string | null;
@@ -108,7 +108,7 @@ export interface PedidoAtivoResponse {
   pedido_id: number;
   rota_id?: number | null;
   drone_id?: string | null;
-  status: string;
+  status: PedidoStatus;
   rota?: RotaResponse | null;
   drone?: DroneResponse | null;
   eta_segundos?: number | null;
