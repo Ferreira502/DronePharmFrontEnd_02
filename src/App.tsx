@@ -10,19 +10,27 @@ import {
 
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
+import { FormSkeleton } from "@/components/ui/FormSkeleton";
 import { MonitoringSelector } from "@/features/monitoring/components/MonitoringSelector";
 import { OrderMonitoringDashboard } from "@/features/monitoring/OrderMonitoringDashboard";
-const FALLBACK_TITLE = "Carregando modulo";
-const FALLBACK_DESCRIPTION = "Preparando a tela solicitada.";
 
-const PedidoListPage = lazy(
-  () => import("@/features/management/pedidos/PedidoListPage"),
+const ListaPedidos = lazy(
+  () => import("@/features/management/ListaPedidos"),
 );
-const PedidoCreatePage = lazy(
-  () => import("@/features/management/pedidos/PedidoCreatePage"),
+const FormPedido = lazy(
+  () => import("@/features/management/FormPedido"),
 );
-const DroneListPage = lazy(
-  () => import("@/features/management/drones/DroneListPage"),
+const ListaDrones = lazy(
+  () => import("@/features/drones/ListaDrones"),
+);
+const ListaFarmacias = lazy(
+  () => import("@/features/farmacias/ListaFarmacias"),
+);
+const FormFarmacia = lazy(
+  () => import("@/features/farmacias/FormFarmacia"),
+);
+const FormDrone = lazy(
+  () => import("@/features/drones/FormDrone"),
 );
 
 function getPedidoIdParamValue(pedidoIdParam: string | undefined): number {
@@ -39,22 +47,9 @@ function getPedidoIdParamValue(pedidoIdParam: string | undefined): number {
   return parsedPedidoId;
 }
 
-function RouteFallback(): ReactElement {
-  return (
-    <div className="flex min-h-[calc(100dvh-56px)] items-center justify-center p-6">
-      <div className="flex max-w-md flex-col gap-3 rounded-xl border border-border bg-card p-6 text-center">
-        <h2 className="text-lg font-semibold text-foreground">
-          {FALLBACK_TITLE}
-        </h2>
-        <p className="text-sm text-muted-foreground">{FALLBACK_DESCRIPTION}</p>
-      </div>
-    </div>
-  );
-}
-
 function LazyRouteOutlet(): ReactElement {
   return (
-    <Suspense fallback={<RouteFallback />}>
+    <Suspense fallback={<FormSkeleton />}>
       <Outlet />
     </Suspense>
   );
@@ -99,9 +94,13 @@ export default function App(): ReactElement {
             <Route path="monitoramento/:pedidoId?" element={<MonitoringRoute />} />
 
             <Route element={<LazyRouteOutlet />}>
-              <Route path="pedidos" element={<PedidoListPage />} />
-              <Route path="pedidos/novo" element={<PedidoCreatePage />} />
-              <Route path="drones" element={<DroneListPage />} />
+              <Route path="pedidos" element={<ListaPedidos />} />
+              <Route path="pedidos/novo" element={<FormPedido />} />
+              <Route path="farmacias" element={<ListaFarmacias />} />
+              <Route path="farmacias/nova" element={<FormFarmacia />} />
+              <Route path="farmacias/:id/editar" element={<FormFarmacia />} />
+              <Route path="drones" element={<ListaDrones />} />
+              <Route path="drones/novo" element={<FormDrone />} />
             </Route>
 
             <Route path="*" element={<NotFoundRoute />} />

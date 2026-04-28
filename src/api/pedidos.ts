@@ -1,13 +1,17 @@
 import { apiFetch } from "./client";
 import type {
   PedidoAtivoResponse,
+  PedidoCreate,
   PedidoListResponse,
   PedidoResponse,
+  PrioridadeEnum,
   PedidoStatus,
 } from "../types/api";
 
 interface ListPedidosParams {
   status?: PedidoStatus;
+  prioridade?: PrioridadeEnum;
+  farmacia_id?: number;
   limite?: number;
   offset?: number;
 }
@@ -21,6 +25,14 @@ function buildListPedidosQuery(params?: ListPedidosParams): string {
     searchParams.set("status", params.status);
   }
 
+  if (params?.prioridade !== undefined) {
+    searchParams.set("prioridade", String(params.prioridade));
+  }
+
+  if (params?.farmacia_id !== undefined) {
+    searchParams.set("farmacia_id", String(params.farmacia_id));
+  }
+
   if (params?.limite !== undefined) {
     searchParams.set("limite", String(params.limite));
   }
@@ -32,6 +44,16 @@ function buildListPedidosQuery(params?: ListPedidosParams): string {
   const query = searchParams.toString();
 
   return query ? `?${query}` : "";
+}
+
+export function criarPedido(body: PedidoCreate): Promise<PedidoResponse> {
+  return apiFetch<PedidoResponse>(`${PEDIDOS_BASE_PATH}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 }
 
 export function getPedido(id: number): Promise<PedidoResponse> {

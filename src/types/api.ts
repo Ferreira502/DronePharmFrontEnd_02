@@ -7,6 +7,15 @@ export type PedidoStatus =
   | "cancelado"
   | "falha";
 
+export type PrioridadeEnum = 1 | 2 | 3;
+export type StatusDroneEnum =
+  | "aguardando"
+  | "em_voo"
+  | "retornando"
+  | "carregando"
+  | "manutencao"
+  | "emergencia";
+
 export interface ValidationErrorDetail {
   loc: Array<string | number>;
   msg: string;
@@ -22,12 +31,26 @@ export interface CoordenadaSchema {
   longitude: number;
 }
 
+export interface PedidoCreate {
+  coordenada: CoordenadaSchema;
+  peso_kg: number;
+  prioridade?: PrioridadeEnum;
+  descricao?: string;
+  farmacia_id: number;
+  janela_fim?: string | null;
+}
+
+export interface PedidoUpdate {
+  descricao?: string | null;
+  janela_fim?: string | null;
+}
+
 export interface PedidoResponse {
   id: number;
   latitude: number;
   longitude: number;
   peso_kg: number;
-  prioridade: number;
+  prioridade: PrioridadeEnum;
   descricao: string | null;
   farmacia_id: number;
   rota_id: number | null;
@@ -62,7 +85,7 @@ export interface DestinoPedidoResponse {
 }
 
 export interface PedidoResumoTrackingResponse {
-  prioridade: number;
+  prioridade: PrioridadeEnum;
   descricao?: string | null;
   farmacia_id: number;
   janela_fim?: string | null;
@@ -76,15 +99,75 @@ export interface WaypointResponse {
   label: string;
 }
 
+export interface DroneCreate {
+  id: string;
+  nome: string;
+  capacidade_max_kg?: number;
+  autonomia_max_km?: number;
+  velocidade_ms?: number;
+}
+
+export interface DroneUpdate {
+  status?: StatusDroneEnum | null;
+  bateria_pct?: number | null;
+  latitude_atual?: number | null;
+  longitude_atual?: number | null;
+}
+
 export interface DroneResponse {
   id: string;
-  modelo: string;
-  autonomia_km: number;
-  carga_max_kg: number;
+  nome: string;
+  capacidade_max_kg: number;
+  autonomia_max_km: number;
   velocidade_ms: number;
-  status: string;
-  bateria_pct?: number | null;
-  criado_em: string;
+  status: StatusDroneEnum;
+  bateria_pct: number;
+  latitude_atual: number | null;
+  longitude_atual: number | null;
+  missoes_realizadas: number;
+  cadastrado_em: string;
+}
+
+export interface DroneListResponse {
+  total: number;
+  drones: DroneResponse[];
+}
+
+export interface FarmaciaCreate {
+  nome: string;
+  latitude: number;
+  longitude: number;
+  endereco?: string;
+  cidade?: string;
+  uf?: string;
+  deposito?: boolean;
+}
+
+export interface FarmaciaUpdate {
+  nome?: string | null;
+  endereco?: string | null;
+  cidade?: string | null;
+  uf?: string | null;
+  ativa?: boolean | null;
+  deposito?: boolean | null;
+}
+
+export interface FarmaciaResponse {
+  id: number;
+  nome: string;
+  latitude: number;
+  longitude: number;
+  endereco: string;
+  cidade: string;
+  uf: string;
+  deposito: boolean;
+  ativa: boolean;
+  criada_em?: string | null;
+}
+
+export interface FarmaciaListResponse {
+  total: number;
+  farmacias: FarmaciaResponse[];
 }
 
 export interface RotaResponse {
